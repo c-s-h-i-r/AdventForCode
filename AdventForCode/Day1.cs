@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace AdventForCode
 {
@@ -23,7 +22,7 @@ namespace AdventForCode
         //To find it, individually calculate the fuel needed for the mass of each module (your puzzle input), then add together all the fuel values.
         //  What is the sum of the fuel requirements for all of the modules on your spacecraft?
 
-        public Day1(string filePath = @"C:\Users\Chris\source\repos\AdventForCode Challenge\AdventForCode\input.txt")
+        public Day1(string filePath)
         {
             TotalFuelNeeded = CalcFuelNeeded(Program.ReadInput(filePath));
             TotalFuelNeededBetter = CalcFuelNeededPart2(Program.ReadInput(filePath));
@@ -31,8 +30,8 @@ namespace AdventForCode
 
         private double CalcFuelNeeded(string[] moduleMasses)
         {
-            double fuelNeeded = 0.0;
-            foreach(var moduleMass in moduleMasses)
+            var fuelNeeded = 0.0;
+            foreach (var moduleMass in moduleMasses)
             {
                 fuelNeeded += CalcFuelNeeded(double.Parse(moduleMass));
             }
@@ -67,25 +66,25 @@ namespace AdventForCode
         //the mass of the added fuel? (Calculate the fuel requirements for each module separately, then add them all up at the end.)
         public static double CalcFuelNeededPart2(string[] moduleMasses)
         {
-            double fuelNeeded = 0.0;
+            var fuelNeeded = 0.0;
 
             foreach (var moduleMass in moduleMasses)
             {
                 fuelNeeded += CalcFuelNeededPart2(double.Parse(moduleMass));
             }
-            
+
             return fuelNeeded;
         }
 
         public static double CalcFuelNeededPart2(double moduleMass)
         {
-            var fuelNeededForMass = Math.Floor(moduleMass / 3.0) - 2;
-        
+            var fuelNeededForMass = CalcFuelNeeded(moduleMass);
+
             // calc fuel needed for mass of fuel
             var existingMass = fuelNeededForMass;
             while (existingMass > 0)
             {
-                var moreFuelNeeded = Math.Floor(existingMass / 3.0) - 2;
+                var moreFuelNeeded = CalcFuelNeeded(existingMass);
                 if (moreFuelNeeded > 0)
                 {
                     fuelNeededForMass += moreFuelNeeded;

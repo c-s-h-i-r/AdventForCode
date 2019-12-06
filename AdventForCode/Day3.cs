@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.Drawing;
+using System.Linq;
 
 namespace AdventForCode
 {
@@ -51,10 +50,17 @@ namespace AdventForCode
 
         public int FindClosestDistanceToOrigin(string[] wire1, string[] wire2)
         {
-            this.Wire1Path = TracePathCountingSteps(wire1);
-            this.Wire2Path = TracePathCountingSteps(wire2);
+            Wire1Path = TracePathCountingSteps(wire1);
+            Wire2Path = TracePathCountingSteps(wire2);
             var crossings = FindIntersectionPoints();
-            var closestPoint = crossings.Select(p => new { p.Key.X, p.Key.Y, Distance = Math.Abs(p.Key.X) + Math.Abs(p.Key.Y) }).OrderBy(x=>x.Distance).FirstOrDefault();
+            var closestPoint = crossings.Select(p => new
+            {
+                p.Key.X,
+                p.Key.Y,
+                Distance = Math.Abs(p.Key.X) + Math.Abs(p.Key.Y)
+            })
+                .OrderBy(x => x.Distance)
+                .FirstOrDefault();
 
             //What is the Manhattan distance from the central port to the closest intersection?
             return closestPoint?.Distance ?? 0;
@@ -63,7 +69,7 @@ namespace AdventForCode
         private Dictionary<Point, int> FindIntersectionPoints()
         {
             var result = new Dictionary<Point, int>();
-            foreach(var x in Wire1Path)
+            foreach (var x in Wire1Path)
             {
                 if (Wire2Path.ContainsKey(x.Key))
                 {
@@ -71,71 +77,54 @@ namespace AdventForCode
                 }
             }
             return result;
-            //return Wire1Path.Intersect(Wire2Path).ToDictionary(x=>x.Key, x=>x.Value);//  ()).Distinct().ToList();
         }
 
         public int FindIntersectionWithLeastSteps(string[] wire1, string[] wire2)
         {
-            this.Wire1Path = TracePathCountingSteps(wire1);
-            this.Wire2Path = TracePathCountingSteps(wire2);
+            Wire1Path = TracePathCountingSteps(wire1);
+            Wire2Path = TracePathCountingSteps(wire2);
 
             var crossings = FindIntersectionPoints();
 
             var closestPoint = crossings.Min(x => x.Value);
             return closestPoint;
         }
-        private Dictionary<Point,int> TracePathCountingSteps(string[] wireDirections)
+
+        private Dictionary<Point, int> TracePathCountingSteps(string[] wireDirections)
         {
             // Ignore the origin
             var path = new Dictionary<Point, int>();
-            var previousLocation = new Point();
+            var previousLocationX = 0;
+            var previousLocationY = 0;
             var stepCount = 0;
             foreach (var step in wireDirections)
             {
                 var direction = step.Substring(0, 1);
                 var distance = int.Parse(step.Substring(1));
-                for (int i = 1; i <= distance; i++)
+                for (var i = 1; i <= distance; i++)
                 {
-                    Point p = new Point();
                     switch (direction)
                     {
                         case "R":
-                            p = new Point(previousLocation.X + i, previousLocation.Y);
+                            previousLocationX++;
                             break;
                         case "L":
-                            p = new Point(previousLocation.X - i, previousLocation.Y);
+                            previousLocationX--;
                             break;
                         case "U":
-                            p = new Point(previousLocation.X, previousLocation.Y + i);
+                            previousLocationY++;
                             break;
                         case "D":
-                            p = new Point(previousLocation.X, previousLocation.Y - i);
+                            previousLocationY--;
                             break;
                     }
-                    if (path.ContainsKey(p))
+
+                    stepCount++;
+                    var p = new Point(previousLocationX, previousLocationY);
+                    if (!path.ContainsKey(p))
                     {
-                        stepCount++;//stepCount = path[p];
-                    }
-                    else
-                    {
-                        stepCount++;
                         path.Add(p, stepCount);
                     }
-                }
-                switch (direction)
-                {
-                    case "R":
-                        previousLocation = new Point(previousLocation.X + distance, previousLocation.Y);
-                        break;
-                    case "L":
-                        previousLocation = new Point(previousLocation.X - distance, previousLocation.Y);
-                        break;
-                    case "U":
-                        previousLocation = new Point(previousLocation.X, previousLocation.Y + distance);
-                        break;
-                    case "D":
-                        previousLocation = new Point(previousLocation.X, previousLocation.Y - distance);
-                        break;
                 }
             }
             return path;
@@ -143,17 +132,16 @@ namespace AdventForCode
 
         public int RunChallenge3Part1()
         {
-            var input = Program.ReadInput(this.filePath);
-            this.Wire1 = input[0].Split(",");
-            this.Wire2 = input[1].Split(",");
+            var input = Program.ReadInput(filePath);
+            Wire1 = input[0].Split(",");
+            Wire2 = input[1].Split(",");
             return FindClosestDistanceToOrigin(Wire1, Wire2);
         }
         public int RunChallenge3Part2()
         {
-            var input = Program.ReadInput(this.filePath);
-            this.Wire1 = input[0].Split(",");
-
-            this.Wire2 = input[1].Split(",");
+            var input = Program.ReadInput(filePath);
+            Wire1 = input[0].Split(",");
+            Wire2 = input[1].Split(",");
             return FindIntersectionWithLeastSteps(Wire1, Wire2);
         }
     }

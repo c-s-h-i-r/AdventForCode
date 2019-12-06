@@ -10,15 +10,14 @@ namespace AdventForCodeTest
         [TestMethod]
         public void TestDay1()
         {
+            Assert.AreEqual(2, Day1.CalcFuelNeeded(12));
+            Assert.AreEqual(2, Day1.CalcFuelNeeded(14));
+            Assert.AreEqual(654, Day1.CalcFuelNeeded(1969));
+            Assert.AreEqual(33583, Day1.CalcFuelNeeded(100756));
 
-            //Assert.AreEqual(2, Day1.CalcFuelNeeded(12));
-            //Assert.AreEqual(2, Day1.CalcFuelNeeded(14));
-            //Assert.AreEqual(654, Day1.CalcFuelNeeded(1969));
-            //Assert.AreEqual(33583, Day1.CalcFuelNeeded(100756));
-
-            //Assert.AreEqual(2, Day1.CalcFuelNeededPart2(new string[] { "14" }));
-            //Assert.AreEqual(966, Day1.CalcFuelNeededPart2(new string[] { "1969" }));
-            //Assert.AreEqual(50346, Day1.CalcFuelNeededPart2(new string[] { "100756" }));
+            Assert.AreEqual(2, Day1.CalcFuelNeededPart2(new string[] { "14" }));
+            Assert.AreEqual(966, Day1.CalcFuelNeededPart2(new string[] { "1969" }));
+            Assert.AreEqual(50346, Day1.CalcFuelNeededPart2(new string[] { "100756" }));
         }
 
         [TestMethod]
@@ -43,7 +42,6 @@ namespace AdventForCodeTest
             //30,40,50
             //Stepping forward 4 more positions arrives at opcode 99, halting the program.
 
-            //Here are the initial and final states of a few more small programs:
             var computer = new Computer();
             computer.Memory = new List<int>() { 1, 0, 0, 0, 99 };
             computer.RunIntCodeProgram();
