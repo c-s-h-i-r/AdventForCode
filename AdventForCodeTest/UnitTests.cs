@@ -164,7 +164,94 @@ namespace AdventForCodeTest
         [TestMethod]
         public void TestDay5()
         {
+            var computer = new Computer("04,0,99");
+            computer.RunIntCodeProgram();
+            CollectionAssert.AreEqual(new List<int>() { 4 }, computer.DiagnosticOutput);
+            computer = new Computer("1002,4,3,4,33");
+            computer.RunIntCodeProgram();
+            CollectionAssert.AreEqual(new List<int>() { 1002, 4, 3, 4, 99 }, computer.Memory);
 
+            //For example, here are several programs that take one input, compare it to the value 8, and then produce one output:
+            // - Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+            computer = new Computer("3,9,8,9,10,9,4,9,99,-1,8");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -8 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 0 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+
+            // - Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+            computer = new Computer("3,9,7,9,10,9,4,9,99,-1,8");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 8 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 7 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 9 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+
+            // - Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+            computer = new Computer("3,3,1108,-1,8,3,4,3,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1108,-1,8,3,4,3,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 7 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1108,-1,8,3,4,3,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -8 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1108,-1,8,3,4,3,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 9 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+
+            //Here are some jump tests that take an input, then output 0 if the input was zero or 1 if the input was non-zero:
+            // (using position mode)
+            computer = new Computer("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 0 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer = new Computer("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 1 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer = new Computer("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer = new Computer("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 9 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+
+            // (using immediate mode)
+            computer = new Computer("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 0 }));
+            CollectionAssert.AreEqual(new List<int>() { 0 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 1 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+            computer = new Computer("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 9 }));
+            CollectionAssert.AreEqual(new List<int>() { 1 }, computer.DiagnosticOutput);
+
+            //This example program uses an input instruction to ask for a single number.
+            //The program will then 
+                //output 999 if the input value is below 8, 
+                //output 1000 if the input value is equal to 8, 
+                //or output 1001 if the input value is greater than 8.
+            computer = new Computer("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 0 }));
+            CollectionAssert.AreEqual(new List<int>() { 999 }, computer.DiagnosticOutput);
+            computer = new Computer("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 8 }));
+            CollectionAssert.AreEqual(new List<int>() { 1000 }, computer.DiagnosticOutput);
+            computer = new Computer("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 9 }));
+            CollectionAssert.AreEqual(new List<int>() { 1001 }, computer.DiagnosticOutput);
+            computer = new Computer("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
+            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -1 }));
+            CollectionAssert.AreEqual(new List<int>() { 999 }, computer.DiagnosticOutput);
         }
-        }
+    }
 }

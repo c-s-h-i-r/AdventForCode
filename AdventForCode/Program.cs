@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace AdventForCode
@@ -32,6 +33,9 @@ namespace AdventForCode
             Console.WriteLine(day4.RunChallengePart2());
 
             var day5 = new Day5(Path.Join(appFolder.FullName, "inputDay5.txt"));
+            Console.WriteLine(string.Join(',',day5.RunChallengePart1()));
+            Console.WriteLine(string.Join(',', day5.RunChallengePart2()));
+
         }
     }
 }
