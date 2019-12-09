@@ -5,23 +5,23 @@ using System.Text;
 
 namespace AdventForCode
 {
-    //  Intcode programs are given as a list of integers; 
-    //      these values are used as the initial state for the computer's memory. 
+    //  Intcode programs are given as a list of integers;
+    //      these values are used as the initial state for the computer's memory.
     //  When you run an Intcode program, make sure to start by initializing memory to the program's values.
     //  A position in memory is called an address (for example, the first value in memory is at "address 0").
     //  Opcodes(like 1, 2, or 99) mark the beginning of an instruction.
-    //      The values used immediately after an opcode, if any, are called the instruction's parameters. 
-    //          For example, in the instruction 1,2,3,4, 1 is the opcode; 2, 3, and 4 are the parameters. 
+    //      The values used immediately after an opcode, if any, are called the instruction's parameters.
+    //          For example, in the instruction 1,2,3,4, 1 is the opcode; 2, 3, and 4 are the parameters.
     //          The instruction 99 contains only an opcode and has no parameters.
-    //  The address of the current instruction is called the instruction pointer; it starts at 0. 
-    //  After an instruction finishes, the instruction pointer increases by the number of values in the instruction; until you add more instructions to the computer, 
-    //  this is always 4 (1 opcode + 3 parameters) for the add and multiply instructions. 
+    //  The address of the current instruction is called the instruction pointer; it starts at 0.
+    //  After an instruction finishes, the instruction pointer increases by the number of values in the instruction; until you add more instructions to the computer,
+    //  this is always 4 (1 opcode + 3 parameters) for the add and multiply instructions.
     //      (The halt instruction would increase the instruction pointer by 1, but it halts the program instead.)
     //Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
     //For example, the instruction 3,50 would take an input value and store it at address 50.
-    //Opcode 4 outputs the value of its only parameter. 
+    //Opcode 4 outputs the value of its only parameter.
     //For example, the instruction 4,50 would output the value at address 50.
-    //Programs that use these instructions will come with documentation that explains what should be connected to the input and output. 
+    //Programs that use these instructions will come with documentation that explains what should be connected to the input and output.
     //The program 3,0,4,0,99 outputs whatever it gets as input, then halts.
 
     public class Computer
@@ -83,7 +83,7 @@ namespace AdventForCode
                 Memory[2] = verb;
             }
         }
-        
+
         public void RunIntCodeProgram(Stack<int> programInput = null)
         {
             DiagnosticOutput.Clear();
@@ -92,17 +92,17 @@ namespace AdventForCode
             {
                 var modeAndOpCode = Memory[instructionPointer];
 
-                //Parameter modes are stored in the same value as the instruction's opcode. 
-                //The opcode is a two-digit number based only on the ones and tens digit of the value, 
-                //that is, the opcode is the rightmost two digits of the first value in an instruction. 
+                //Parameter modes are stored in the same value as the instruction's opcode.
+                //The opcode is a two-digit number based only on the ones and tens digit of the value,
+                //that is, the opcode is the rightmost two digits of the first value in an instruction.
                 var modeAndOpCodeString = modeAndOpCode.ToString().PadLeft(5, '0');
 
                 int opCode;
                 Stack<char> modes;
-                
-                //Parameter modes are single digits, one per parameter, read right-to-left from the opcode: 
-                //the first parameter's mode is in the hundreds digit, 
-                //the second parameter's mode is in the thousands digit, 
+
+                //Parameter modes are single digits, one per parameter, read right-to-left from the opcode:
+                //the first parameter's mode is in the hundreds digit,
+                //the second parameter's mode is in the thousands digit,
                 //the third parameter's mode is in the ten-thousands digit, and so on.
                 //Any missing modes are 0.
                 if(modeAndOpCodeString.Length < 2)
@@ -121,7 +121,6 @@ namespace AdventForCode
                 int parameter3Address;
                 int instructionParameter1;
                 int instructionParameter2;
-                int instructionParameter3;
                 int instructionCount = 0;
                 switch ((OpCodes)opCode)
                 {
@@ -161,7 +160,7 @@ namespace AdventForCode
                         instructionCount = 2;
                         break;
                     case OpCodes.Output:
-                        //Opcode 4 outputs the value of its only parameter. 
+                        //Opcode 4 outputs the value of its only parameter.
                         //For example, the instruction 4,50 would output the value at address 50.
                         if ((ParameterMode)modes.Pop() == ParameterMode.ImmediateMode)
                         {
@@ -174,7 +173,7 @@ namespace AdventForCode
                         instructionCount = 2;
                         break;
                     case OpCodes.JumpIfTrue:
-                        //Opcode 5 is jump-if-true: 
+                        //Opcode 5 is jump-if-true:
                         //if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter.
                         //Otherwise, it does nothing.
                         parameter1Address = Memory[instructionPointer + 1];
@@ -191,7 +190,7 @@ namespace AdventForCode
                         }
                         break;
                     case OpCodes.JumpIfFalse:
-                    //Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. 
+                    //Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter.
                     //Otherwise, it does nothing.
                         parameter1Address = Memory[instructionPointer + 1];
                         parameter2Address = Memory[instructionPointer + 2];
@@ -233,7 +232,7 @@ namespace AdventForCode
                         throw new Exception("Something went wrong");
                 }
 
-                //Instruction pointer should increase by the number of values in the instruction after the instruction finishes. 
+                //Instruction pointer should increase by the number of values in the instruction after the instruction finishes.
                 //Normally, after an instruction is finished, the instruction pointer increases by the number of values in that instruction.
                 //However, if the instruction modifies the instruction pointer, that value is used and the instruction pointer is not automatically increased.
                 instructionPointer += instructionCount;

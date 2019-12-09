@@ -253,5 +253,50 @@ namespace AdventForCodeTest
             computer.RunIntCodeProgram(new Stack<int>(new List<int>() { -1 }));
             CollectionAssert.AreEqual(new List<int>() { 999 }, computer.DiagnosticOutput);
         }
+        [TestMethod]
+        public void TestDay6()
+        {
+            //For example, suppose you have the following map:
+            //COM)B
+            //B)C
+            //C)D
+            //D)E
+            //E)F
+            //B)G
+            //G)H
+            //D)I
+            //E)J
+            //J)K
+            //K)L
+            //Visually, the above map of orbits looks like this:
+            //        G - H       J - K - L
+            //       /           /
+            //COM - B - C - D - E - F
+            //               \
+            //                I
+            //In this visual representation, when two objects are connected by a line, the one on the right directly orbits the one on the left.
+            //Here, we can count the total number of orbits as follows:
+
+            //D directly orbits C and indirectly orbits B and COM, a total of 3 orbits.
+            //L directly orbits K and indirectly orbits J, E, D, C, B, and COM, a total of 7 orbits.
+            //COM orbits nothing.
+            //The total number of direct and indirect orbits in this example is 42.
+            var day6 = new Day6();
+            day6.LoadOrbits("COM)B\r\nB)C\r\nC)D\r\nD)E\r\nE)F\r\nB)G\r\nG)H\r\nD)I\r\nE)J\r\nJ)K\r\nK)L\r\n");
+            Assert.AreEqual(12, day6.allObjects.Count);
+            Assert.AreEqual(0, day6.allObjects["COM"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["B"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["C"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["D"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["E"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["F"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["G"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["H"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["I"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["J"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["K"].Orbitting.Count);
+            Assert.AreEqual(1, day6.allObjects["L"].Orbitting.Count);
+            //Assert.AreEqual(42, day6.CalcOrbits());
+        }
     }
 }

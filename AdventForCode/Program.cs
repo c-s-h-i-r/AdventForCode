@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace AdventForCode
 {
     internal class Program
     {
-        public static string[] ReadInput(string filePath)
+        /// <summary>
+        /// Read input from given file and return the lines.
+        /// </summary>
+        public static string[] ReadInput(string filePath, string separator="\n")
         {
             using var stream = new StreamReader(filePath);
-            return stream.ReadToEnd().Trim().Split("\n");
+            return stream.ReadToEnd().Trim().Split(separator);
         }
 
         private static void Main()
@@ -35,7 +37,10 @@ namespace AdventForCode
             var day5 = new Day5(Path.Join(appFolder.FullName, "inputDay5.txt"));
             Console.WriteLine(string.Join(',',day5.RunChallengePart1()));
             Console.WriteLine(string.Join(',', day5.RunChallengePart2()));
-
+            //var day6 = new Day6(Path.Join(appFolder.FullName, "inputDay6.txt"));
+            //Console.WriteLine(day6.RunChallengePart1());
+            var day8 = new Day8(Path.Join(appFolder.FullName, "inputDay8.txt"));
+            Console.WriteLine(day8.RunChallengePart1());
         }
     }
 }
