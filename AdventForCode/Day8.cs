@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AdventForCode
 {
@@ -30,66 +28,90 @@ namespace AdventForCode
 
         //Layer 2: 789
         //         012
-        
-//            --- Part Two ---
-//Now you're ready to decode the image. The image is rendered by stacking the layers and aligning the pixels with the same positions in each layer.
-//The digits indicate the color of the corresponding pixel: 0 is black, 1 is white, and 2 is transparent.
-//The layers are rendered with the first layer in front and the last layer in back.
-//So, if a given position has a transparent pixel in the first and second layers, 
-    //a black pixel in the third layer,
-    //and a white pixel in the fourth layer, 
-    //the final image would have a black pixel at that position.
-//For example, given an image 2 pixels wide and 2 pixels tall, the image data 0222112222120000 corresponds to the following image layers:
-//Layer 1: 02
-//         22
-//Layer 2: 11
-//         22
-//Layer 3: 22
-//         12
-//Layer 4: 00
-//         00
-//Then, the full image can be found by determining the top visible pixel in each position:
-
-//The top-left pixel is black because the top layer is 0.
-//The top-right pixel is white because the top layer is 2 (transparent), but the second layer is 1.
-//The bottom-left pixel is white because the top two layers are 2, but the third layer is 1.
-//The bottom-right pixel is black because the only visible pixel in that position is 0 (from layer 4).
-//So, the final image looks like this:
-//01
-//10
-//What message is produced after decoding your image?
 
         private readonly string filePath;
-        public Day8(string filePath)
+        private readonly int width;
+        private readonly int height;
+        private int LayerSize => this.width * this.height;
+
+        public Day8(string filePath, int pixelWidth, int pixelHeight)
         {
             this.filePath = filePath;
+            this.width = pixelWidth;
+            this.height = pixelHeight;
         }
+
         public int RunChallengePart1()
         {
-            //The image you received is 25 pixels wide and 6 pixels tall.
-            //To make sure the image wasn't corrupted during transmission, 
-            var message = Program.ReadInput(this.filePath, "\n")[0];
-            const int width = 25;
-            const int height = 6;
-            const int chunkSize = width * height; 
-            //Break up the string into chunks of widthxheight chunks
-            var chunks = new List<string>();
-            for (int i = 0; i < message.Length; i+= chunkSize)
-            {
-                chunks.Add(message.Substring(i, chunkSize));
-            }
+            var layers = SeparateIntoLayers(Program.ReadInput(this.filePath, "\n")[0]);
 
+            //To make sure the image wasn't corrupted during transmission, 
             //the Elves would like you to find the layer that contains the fewest 0 digits. 
-            var minDigits = chunks.Select(x => new 
-            { 
-                data = x, 
-                zeroCount = x.Count(x => x == '0') 
+            var minDigits = layers.Select(x => new
+            {
+                data = x,
+                zeroCount = x.Count(x => x == '0')
             })
-            .OrderBy(x=>x.zeroCount).FirstOrDefault();
+            .OrderBy(x => x.zeroCount).FirstOrDefault();
+
             //On that layer, what is the number of 1 digits multiplied by the number of 2 digits?
-            var oneDigits = minDigits.data.Count(x => x == '1');             
+            var oneDigits = minDigits.data.Count(x => x == '1');
             var twoDigits = minDigits.data.Count(x => x == '2');
             return oneDigits * twoDigits;
+        }
+        public string RunChallengePart2()
+        {
+            //What message is produced after decoding your image?
+            return ConvertToImage(SeparateIntoLayers(Program.ReadInput(this.filePath, "\n")[0]));
+        }
+
+        //Break up the string into chunks of widthxheight chunks
+        public List<string> SeparateIntoLayers(string message)
+        {
+            var layers = new List<string>();
+            for (var i = 0; i < message.Length; i += LayerSize)
+            {
+                layers.Add(message.Substring(i, LayerSize));
+            }
+            return layers;
+        }
+
+        private enum PixelColour
+        {
+            Black = 0,
+            White = 1,
+            Transparent = 2
+        }
+        public string ConvertToImage(List<string> layers)
+        {
+            //The image is rendered by stacking the layers and aligning the pixels with the same positions in each layer.
+            //The digits indicate the color of the corresponding pixel: 0 is black, 1 is white, and 2 is transparent.
+            //The layers are rendered with the first layer in front and the last layer in back.
+            //So, if a given position has a transparent pixel in the first and second layers, 
+            //a black pixel in the third layer,
+            //and a white pixel in the fourth layer, 
+            //the final image would have a black pixel at that position.
+            var finalMessage = layers[0].ToList();
+
+            var otherLayers = layers.Skip(1);
+
+            for (var i = 0; i < LayerSize; i++)
+            {
+                foreach (var layer in otherLayers)
+                {
+                    if ((PixelColour)int.Parse(finalMessage[i].ToString()) != PixelColour.Transparent)
+                    {
+                        break;
+                    }
+                    // If we can see through to the next layer, continue
+                    if ((PixelColour)int.Parse(layer[i].ToString()) != PixelColour.Transparent)
+                    {
+                        finalMessage[i] = layer[i];
+                    }
+                }
+            }
+
+            return string.Join("", finalMessage.Where(x => x != 2));
         }
     }
 }

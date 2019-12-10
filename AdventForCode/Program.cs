@@ -39,8 +39,12 @@ namespace AdventForCode
             Console.WriteLine(string.Join(',', day5.RunChallengePart2()));
             //var day6 = new Day6(Path.Join(appFolder.FullName, "inputDay6.txt"));
             //Console.WriteLine(day6.RunChallengePart1());
-            var day8 = new Day8(Path.Join(appFolder.FullName, "inputDay8.txt"));
-            Console.WriteLine(day8.RunChallengePart1());
-        }
+            var day8 = new Day8(Path.Join(appFolder.FullName, "inputDay8.txt"), 25, 6);
+            //Console.WriteLine(day8.RunChallengePart1());
+            Console.WriteLine(day8.RunChallengePart2());
+            
+            // 100010110011100100011111010001100101001010001000100101010000100100101000100001001011011100001000100000100100101010000100100000010001110100100010011110
+            // 100010110011100100011111010001100101001010001000100101010000100100101000100001001011011100001000100000100100101010000100100000010001110100100010011110
+                }
     }
 }
