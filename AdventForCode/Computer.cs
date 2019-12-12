@@ -26,6 +26,11 @@ namespace AdventForCode
 
     public class Computer
     {
+        //public enum Phase
+        //{
+        //    0, 1, 2, 3, 4
+        //}
+
         public enum OpCodes
         {
             FinishAndImmediatelyHalt = 99,

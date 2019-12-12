@@ -96,7 +96,7 @@ namespace AdventForCode
 
         private int DepthFirstTraverse(Dictionary<string, ObjectNode> allObjects)
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public void RunChallengePart2()

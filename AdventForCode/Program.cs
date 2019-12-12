@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace AdventForCode
@@ -8,7 +9,7 @@ namespace AdventForCode
         /// <summary>
         /// Read input from given file and return the lines.
         /// </summary>
-        public static string[] ReadInput(string filePath, string separator="\n")
+        public static string[] ReadInput(string filePath, string separator = "\n")
         {
             using var stream = new StreamReader(filePath);
             return stream.ReadToEnd().Trim().Split(separator);
@@ -35,16 +36,18 @@ namespace AdventForCode
             Console.WriteLine(day4.RunChallengePart2());
 
             var day5 = new Day5(Path.Join(appFolder.FullName, "inputDay5.txt"));
-            Console.WriteLine(string.Join(',',day5.RunChallengePart1()));
+            Console.WriteLine(string.Join(',', day5.RunChallengePart1()));
             Console.WriteLine(string.Join(',', day5.RunChallengePart2()));
-            //var day6 = new Day6(Path.Join(appFolder.FullName, "inputDay6.txt"));
-            //Console.WriteLine(day6.RunChallengePart1());
+            var day6 = new Day6(Path.Join(appFolder.FullName, "inputDay6.txt"));
+            Console.WriteLine(day6.RunChallengePart1());
+            var day7 = new Day7(Path.Join(appFolder.FullName, "inputDay7.txt"));
+            Console.WriteLine(day7.RunChallengePart1());
+            //Console.WriteLine(day7.RunChallengePart2());
             var day8 = new Day8(Path.Join(appFolder.FullName, "inputDay8.txt"), 25, 6);
-            //Console.WriteLine(day8.RunChallengePart1());
+            Console.WriteLine(day8.RunChallengePart1());
             Console.WriteLine(day8.RunChallengePart2());
-            
-            // 100010110011100100011111010001100101001010001000100101010000100100101000100001001011011100001000100000100100101010000100100000010001110100100010011110
-            // 100010110011100100011111010001100101001010001000100101010000100100101000100001001011011100001000100000100100101010000100100000010001110100100010011110
-                }
+
+            //var day9 = new Day9("");    
+        }
     }
 }
