@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AdventForCode
 {
-    public class Day8:BaseChallenge
+    public class Day8 : BaseChallenge
     {
         //        --- Day 8: Space Image Format ---
         //The Elves' spirits are lifted when they realize you have an opportunity to reboot one of their Mars rovers,
@@ -34,7 +34,7 @@ namespace AdventForCode
         private readonly int height;
         private int LayerSize => this.width * this.height;
 
-        public Day8(string filePath, int pixelWidth, int pixelHeight): base(filePath)
+        public Day8(string filePath, int pixelWidth, int pixelHeight) : base(filePath)
         {
             this.width = pixelWidth;
             this.height = pixelHeight;
@@ -71,7 +71,7 @@ namespace AdventForCode
             for (var i = 0; i < result.Count; i++)
             {
                 Console.Write(result[i] == '0' ? ' ' : '*');
-                if (i != 0 && i % width == 0)
+                if (i != 0 && i % this.width == 0)
                 {
                     Console.Write(Environment.NewLine);
                 }
