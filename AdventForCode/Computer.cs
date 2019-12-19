@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AdventForCode
 {
@@ -48,8 +46,9 @@ namespace AdventForCode
         {
             //position mode, which causes the parameter to be interpreted as a position - if the parameter is 50, its value is the value stored at address 50 in memory.
             PositionMode = '0',
+
             //In immediate mode, a parameter is interpreted as a value - if the parameter is 50, its value is simply 50.
-            ImmediateMode ='1'
+            ImmediateMode = '1'
         };
 
         public List<int> Memory { get; set; }
@@ -58,12 +57,13 @@ namespace AdventForCode
 
         public Computer()
         {
-
         }
+
         public Computer(List<int> memory)
         {
             Memory = memory;
         }
+
         public Computer(string initialMemory)
         {
             Memory = GenerateIntCodeProgram(initialMemory);
@@ -110,7 +110,7 @@ namespace AdventForCode
                 //the second parameter's mode is in the thousands digit,
                 //the third parameter's mode is in the ten-thousands digit, and so on.
                 //Any missing modes are 0.
-                if(modeAndOpCodeString.Length < 2)
+                if (modeAndOpCodeString.Length < 2)
                 {
                     opCode = int.Parse(modeAndOpCodeString.Substring(0, 1));
                     modes = new Stack<char>(new char[] { '0', '0', '0', '0', '0' });
@@ -132,6 +132,7 @@ namespace AdventForCode
                     case OpCodes.FinishAndImmediatelyHalt:
                         //for example, 99 means that the program is finished and should immediately halt.
                         return;
+
                     case OpCodes.AddValues:
                         //Opcode 1 adds together numbers read from two positions and stores the result in a third position.
                         parameter1Address = Memory[instructionPointer + 1];
@@ -142,6 +143,7 @@ namespace AdventForCode
                         Memory[parameter3Address] = instructionParameter1 + instructionParameter2;
                         instructionCount = 4;
                         break;
+
                     case OpCodes.MultiplyValues:
                         parameter1Address = Memory[instructionPointer + 1];
                         parameter2Address = Memory[instructionPointer + 2];
@@ -151,6 +153,7 @@ namespace AdventForCode
                         Memory[parameter3Address] = instructionParameter1 * instructionParameter2;
                         instructionCount = 4;
                         break;
+
                     case OpCodes.Input:
                         //Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
                         if ((ParameterMode)modes.Pop() == ParameterMode.ImmediateMode)
@@ -164,6 +167,7 @@ namespace AdventForCode
                         }
                         instructionCount = 2;
                         break;
+
                     case OpCodes.Output:
                         //Opcode 4 outputs the value of its only parameter.
                         //For example, the instruction 4,50 would output the value at address 50.
@@ -177,6 +181,7 @@ namespace AdventForCode
                         }
                         instructionCount = 2;
                         break;
+
                     case OpCodes.JumpIfTrue:
                         //Opcode 5 is jump-if-true:
                         //if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter.
@@ -194,9 +199,10 @@ namespace AdventForCode
                             instructionCount = 3;
                         }
                         break;
+
                     case OpCodes.JumpIfFalse:
-                    //Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter.
-                    //Otherwise, it does nothing.
+                        //Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter.
+                        //Otherwise, it does nothing.
                         parameter1Address = Memory[instructionPointer + 1];
                         parameter2Address = Memory[instructionPointer + 2];
                         instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : Memory[parameter1Address];
@@ -210,9 +216,10 @@ namespace AdventForCode
                             instructionCount = 3;
                         }
                         break;
+
                     case OpCodes.LessThan:
-                    //Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter.
-                    //Otherwise, it stores 0.
+                        //Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter.
+                        //Otherwise, it stores 0.
                         parameter1Address = Memory[instructionPointer + 1];
                         parameter2Address = Memory[instructionPointer + 2];
                         instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : Memory[parameter1Address];
@@ -221,6 +228,7 @@ namespace AdventForCode
                         Memory[parameter3Address] = instructionParameter1 < instructionParameter2 ? 1 : 0;
                         instructionCount = 4;
                         break;
+
                     case OpCodes.Equals:
                         //Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter.
                         //Otherwise, it stores 0.
@@ -232,6 +240,7 @@ namespace AdventForCode
                         Memory[parameter3Address] = instructionParameter1 == instructionParameter2 ? 1 : 0;
                         instructionCount = 4;
                         break;
+
                     default:
                         //The opcode indicates what to do; Encountering an unknown opcode means something went wrong.
                         throw new Exception("Something went wrong");

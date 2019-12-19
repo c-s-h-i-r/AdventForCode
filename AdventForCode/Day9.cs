@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AdventForCode
 {
-    public class Day9
+    public class Day9:BaseChallenge
     {
         //        --- Day 9: Sensor Boost ---
         //You've just said goodbye to the rebooted rover and left Mars when you receive a faint distress signal coming from the asteroid belt.
         //It must be the Ceres monitoring station!
         //In order to lock on to the signal, you'll need to boost your sensors. The Elves send up the latest BOOST program - Basic Operation Of System Test.
-        //While BOOST(your puzzle input) is capable of boosting your sensors, for tenuous safety reasons, 
+        //While BOOST(your puzzle input) is capable of boosting your sensors, for tenuous safety reasons,
         //it refuses to do so until the computer it runs on passes some checks to demonstrate it is a complete Intcode computer.
         //Your existing Intcode computer is missing one key feature: it needs support for parameters in relative mode.
-        //Parameters in mode 2, relative mode, behave very similarly to parameters in position mode: 
+        //Parameters in mode 2, relative mode, behave very similarly to parameters in position mode:
         //the parameter is interpreted as a position. Like position mode, parameters in relative mode can be read from or written to.
-        //The important difference is that relative mode parameters don't count from address 0. 
+        //The important difference is that relative mode parameters don't count from address 0.
         //Instead, they count from a value called the relative base. The relative base starts at 0.
         //The address a relative mode parameter refers to is itself plus the current relative base.
         //When the relative base is 0, relative mode parameters and position mode parameters with the same value refer to the same address.
@@ -29,22 +27,20 @@ namespace AdventForCode
         //Your Intcode computer will also need a few other capabilities:
 
         //The computer's available memory should be much larger than the initial program.
-        //Memory beyond the initial program starts with the value 0 and can be read or written like any other memory. 
+        //Memory beyond the initial program starts with the value 0 and can be read or written like any other memory.
         //    (It is invalid to try to access memory at a negative address, though.)
         //The computer should have support for large numbers. Some instructions near the beginning of the BOOST program will verify this capability.
-        private readonly string filePath;
-        public Day9(string filePath)
-        {
-            this.filePath = filePath;
-        }
 
-        public List<int> RunChallengePart1() {
+        public Day9(string filePath):base(filePath){}
+
+        public List<int> RunChallengePart1()
+        {
             //The BOOST program will ask for a single input; run it in test mode by providing it the value 1.
-            //It will perform a series of checks on each opcode, output any opcodes(and the associated parameter modes) that seem to be functioning incorrectly, 
+            //It will perform a series of checks on each opcode, output any opcodes(and the associated parameter modes) that seem to be functioning incorrectly,
             //and finally output a BOOST keycode.
-            //Once your Intcode computer is fully functional, the BOOST program should report no malfunctioning opcodes when run in test mode; 
+            //Once your Intcode computer is fully functional, the BOOST program should report no malfunctioning opcodes when run in test mode;
             //it should only output a single value, the BOOST keycode.
-            var computer = new Computer(Program.ReadInput(this.filePath)[0]);
+            var computer = new Computer(Util.ReadInput(this.filePath)[0]);
             computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 1 }));
 
             //What BOOST keycode does it produce?

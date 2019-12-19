@@ -1,14 +1,15 @@
 ﻿namespace AdventForCode
 {
-    public class Day4
+    public class Day4 : BaseChallenge
     {
         //        --- Day 4: Secure Container ---
-        //You arrive at the Venus fuel depot only to discover it's protected by a password. 
+        //You arrive at the Venus fuel depot only to discover it's protected by a password.
         //The Elves had written the password on a sticky note, but someone threw it out.
 
         private int CriteriaMax { get; set; }
         private int CriteriaMin { get; set; }
-        public Day4(string puzzleCriteria)
+
+        public Day4(string puzzleCriteria) : base("")
         {
             var inputs = puzzleCriteria.Split("-");
             if (!string.IsNullOrEmpty(inputs[0]) && !string.IsNullOrEmpty(inputs[0]))
@@ -75,8 +76,8 @@
                 }
             }
             return result;
-
         }
+
         public bool MeetsCriteriaUpdated(string password)
         {
             var number = int.Parse(password);
@@ -111,7 +112,6 @@
                 {
                     seqCount = 0;
                 }
-
 
                 //Going from left to right, the digits never decrease; they only ever increase or stay the same(like 111123 or 135679).
                 if (i > 0 && password[i] < password[i - 1])

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AdventForCode
 {
-    public class Day6
+    public class Day6 : BaseChallenge
     {
         // --- Day 6: Universal Orbit Map ---
         //You've landed at the Universal Orbit Map facility on Mercury.
@@ -24,34 +23,33 @@ namespace AdventForCode
         //                  /
         //In this diagram, the object BBB is in orbit around AAA.The path that BBB takes around AAA (drawn with lines) is only partly shown.
 
+        public Dictionary<string, ObjectNode> allObjects = new Dictionary<string, ObjectNode>();
+
         //Before you use your map data to plot a course, you need to make sure it wasn't corrupted during the download.
-        private readonly string filePath;
         private const string COM = "COM";
 
-        public Day6(string filePath="")
-        {
-            this.filePath = filePath;
-        }
+        public Day6(string filePath = "") : base(filePath) { }
 
-        public int RunChallengePart1()
-        {
-            //What is the total number of direct and indirect orbits in your map data?
-            LoadOrbits(Program.ReadInput(this.filePath, "")[0]);
-            return CalcOrbits();
-        }
-
+        //To verify maps, the Universal Orbit Map facility uses orbit count checksums -
+        //the total number of direct orbits (like the one shown above) and indirect orbits.
         public struct ObjectNode
         {
             public string Name;
             public LinkedList<ObjectNode> Orbitting;
         }
-        public Dictionary<string, ObjectNode> allObjects = new Dictionary<string, ObjectNode>();
+        
+        public int CalcOrbits()
+        {
+            //Whenever A orbits B and B orbits C, then A indirectly orbits C.
+            //This chain can be any number of objects long: if A orbits B, B orbits C, and C orbits D, then A indirectly orbits D.
+            return DepthFirstTraverse(this.allObjects);
+        }
 
         public void LoadOrbits(string allOrbits)
         {
             //In the map data, this orbital relationship is written AAA)BBB, which means "BBB is in orbit around AAA".
             var orbitInstructions = allOrbits.Split(Environment.NewLine);
-            foreach(var oi in orbitInstructions.Where(x=>x.Count() > 0))
+            foreach (var oi in orbitInstructions.Where(x => x.Count() > 0))
             {
                 var objects = oi.Split(')');
                 var name = objects[1];
@@ -81,17 +79,18 @@ namespace AdventForCode
                     allObjects.Add(orbittingObjectName, orbitting);
                 }
                 on.Orbitting.AddLast(orbitting);
-
             }
         }
 
-        //To verify maps, the Universal Orbit Map facility uses orbit count checksums -
-        //the total number of direct orbits (like the one shown above) and indirect orbits.
-        public int CalcOrbits()
+        public int RunChallengePart1()
         {
-            //Whenever A orbits B and B orbits C, then A indirectly orbits C.
-            //This chain can be any number of objects long: if A orbits B, B orbits C, and C orbits D, then A indirectly orbits D.
-            return DepthFirstTraverse(this.allObjects);
+            //What is the total number of direct and indirect orbits in your map data?
+            LoadOrbits(Util.ReadInput(this.filePath, "")[0]);
+            return CalcOrbits();
+        }
+
+        public void RunChallengePart2()
+        {
         }
 
         private int DepthFirstTraverse(Dictionary<string, ObjectNode> allObjects)
@@ -99,8 +98,6 @@ namespace AdventForCode
             return 0;
         }
 
-        public void RunChallengePart2()
-        {
-        }
+        
     }
 }
