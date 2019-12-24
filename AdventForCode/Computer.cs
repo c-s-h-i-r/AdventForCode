@@ -18,7 +18,7 @@ namespace AdventForCode
     //Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
     //Opcode 4 outputs the value of its only parameter.
 
-    // Computer supports integer values
+    // Computer supports long values
     //Memory beyond the initial program starts with the value 0 and can be read or written like any other memory.
     //(It is invalid to try to access memory at a negative address, though.)
 
@@ -51,8 +51,8 @@ namespace AdventForCode
             //In immediate mode, a parameter is interpreted as a value - if the parameter is 50, its value is simply 50.
             ImmediateMode = '1',
 
-            //Parameters in relative mode, behave very similarly to parameters in position mode:
-            //the parameter is interpreted as a position. Like position mode, parameters in relative mode can be read from or written to.
+            //Parameters in relative mode, behave very similarly to parameters in position mode:the parameter is interpreted as a position. 
+            //Like position mode, parameters in relative mode can be read from or written to.
             //The important difference is that relative mode parameters don't count from address 0.
             //Instead, they count from a value called the relative base. The relative base starts at 0.
             //The address a relative mode parameter refers to is itself plus the current relative base.
@@ -60,15 +60,15 @@ namespace AdventForCode
             RelativeMode = '2'
         };
 
-        public List<int> Memory { get; set; }
-        public int Output => Memory[0];
-        public List<int> DiagnosticOutput { get; set; } = new List<int>();
+        public long[] Memory { get; set; }
+        public long Output => Memory[0];
+        public List<long> DiagnosticOutput { get; set; } = new List<long>();
 
         public Computer() { }
 
-        public Computer(List<int> memory)
+        public Computer(List<long> memory)
         {
-            Memory = memory;
+            Memory = memory.ToArray();
         }
 
         public Computer(string initialMemory)
@@ -76,31 +76,38 @@ namespace AdventForCode
             Memory = GenerateIntCodeProgram(initialMemory);
         }
 
-        public static List<int> GenerateIntCodeProgram(string input)
+        public static long[] GenerateIntCodeProgram(string input)
         {
-            var IntCode = new List<int>();
+            var intCodeProgram = new long[100];
             var result = input.Split(",");
+            long i = 0;
             foreach (var x in result)
             {
-                IntCode.Add(int.Parse(x));
+                if (i == intCodeProgram.Length)
+                {
+                    intCodeProgram = Util.ResizeArray(intCodeProgram, intCodeProgram.Length + 100);
+                }
+                intCodeProgram[i] = long.Parse(x);
+                i++;
             }
-            return IntCode;
+            // Shrink array to the used portion
+            return Util.ResizeArray(intCodeProgram, i-1);
         }
 
-        public void SetInputs(int noun, int verb)
+        public void SetInputs(long noun, long verb)
         {
-            if (Memory.Count > 1)
+            if (Memory.Length > 1)
             {
                 Memory[1] = noun;
                 Memory[2] = verb;
             }
         }
 
-        public void RunIntCodeProgram(Stack<int> programInput = null)
+        public void RunIntCodeProgram(Stack<long> programInput = null)
         {
             DiagnosticOutput.Clear();
-            var instructionPointer = 0;
-            var relativeBase = 0;
+            long instructionPointer = 0;
+            long relativeBase = 0;
             while (true)
             {
                 var modeAndOpCode = Memory[instructionPointer];
@@ -129,11 +136,9 @@ namespace AdventForCode
                     modes = new Stack<char>(modeAndOpCodeString[0..^2]);
                 }
 
-                int parameter1Address;
-                int parameter2Address;
-                int parameter3Address;
-                int instructionParameter1;
-                int instructionParameter2;
+                long parameter3Address;
+                long instructionParameter1;
+                long instructionParameter2;
                 int instructionCount = 0;
                 switch ((OpCodes)opCode)
                 {
@@ -143,21 +148,17 @@ namespace AdventForCode
 
                     case OpCodes.AddValues:
                         //Opcode 1 adds together numbers read from two positions and stores the result in a third position.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
-                        parameter3Address = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? instructionPointer + 3 : ReadMemory(instructionPointer + 3);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
+                        parameter3Address = GetParameter(instructionPointer + 3, modes.Pop(), relativeBase, false);
                         SetMemory(parameter3Address, instructionParameter1 + instructionParameter2);
                         instructionCount = 4;
                         break;
 
                     case OpCodes.MultiplyValues:
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
-                        parameter3Address = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? instructionPointer + 3 : ReadMemory(instructionPointer + 3);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
+                        parameter3Address = GetParameter(instructionPointer + 3, modes.Pop(), relativeBase, false); 
                         SetMemory(parameter3Address, instructionParameter1 * instructionParameter2);
                         instructionCount = 4;
                         break;
@@ -178,26 +179,15 @@ namespace AdventForCode
 
                     case OpCodes.Output:
                         //Opcode 4 outputs the value of its only parameter.
-                        //For example, the instruction 4,50 would output the value at address 50.
-                        if ((ParameterMode)modes.Pop() == ParameterMode.ImmediateMode)
-                        {
-                            DiagnosticOutput.Add(ReadMemory(instructionPointer + 1));
-                        }
-                        else
-                        {
-                            DiagnosticOutput.Add(ReadMemory(ReadMemory(instructionPointer + 1)));
-                        }
+                        DiagnosticOutput.Add(GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true));
                         instructionCount = 2;
                         break;
 
                     case OpCodes.JumpIfTrue:
-                        //Opcode 5 is jump-if-true:
                         //if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter.
                         //Otherwise, it does nothing.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
                         if (instructionParameter1 != 0)
                         {
                             instructionPointer = instructionParameter2;
@@ -211,10 +201,8 @@ namespace AdventForCode
                     case OpCodes.JumpIfFalse:
                         //Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter.
                         //Otherwise, it does nothing.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
                         if (instructionParameter1 == 0)
                         {
                             instructionPointer = instructionParameter2;
@@ -228,11 +216,9 @@ namespace AdventForCode
                     case OpCodes.LessThan:
                         //Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter.
                         //Otherwise, it stores 0.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
-                        parameter3Address = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? instructionPointer + 3 : ReadMemory(instructionPointer + 3);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
+                        parameter3Address = GetParameter(instructionPointer + 3, modes.Pop(), relativeBase, false);
                         SetMemory(parameter3Address, instructionParameter1 < instructionParameter2 ? 1 : 0);
                         instructionCount = 4;
                         break;
@@ -240,11 +226,9 @@ namespace AdventForCode
                     case OpCodes.Equals:
                         //Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter.
                         //Otherwise, it stores 0.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        parameter2Address = ReadMemory(instructionPointer + 2);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        instructionParameter2 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter2Address : ReadMemory(parameter2Address);
-                        parameter3Address = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? instructionPointer + 3 : ReadMemory(instructionPointer + 3);
+                        instructionParameter1 = GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
+                        instructionParameter2 = GetParameter(instructionPointer + 2, modes.Pop(), relativeBase, true);
+                        parameter3Address = GetParameter(instructionPointer + 3, modes.Pop(), relativeBase, false);
                         SetMemory(parameter3Address, instructionParameter1 == instructionParameter2 ? 1 : 0);
                         instructionCount = 4;
                         break;
@@ -254,9 +238,7 @@ namespace AdventForCode
                         //The relative base increases (or decreases, if the value is negative) by the value of the parameter.
                         //For example, if the relative base is 2000, then after the instruction 109,19, the relative base would be 2019.
                         //If the next instruction were 204,-34, then the value at address 1985 would be output.
-                        parameter1Address = ReadMemory(instructionPointer + 1);
-                        instructionParameter1 = (ParameterMode)modes.Pop() == ParameterMode.ImmediateMode ? parameter1Address : ReadMemory(parameter1Address);
-                        relativeBase += instructionParameter1;
+                        relativeBase += GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, true);
                         instructionCount = 2;
                         break;
 
@@ -272,35 +254,55 @@ namespace AdventForCode
             }
         }
 
+        private long GetParameter(long MemoryLocation, char mode, long relativeBase, bool inputParameter)
+        {
+            //position mode, which causes the parameter to be interpreted as a position - if the parameter is 50, its value is the value stored at address 50 in memory.
+            //In immediate mode, a parameter is interpreted as a value - if the parameter is 50, its value is simply 50.
+            //Parameters in relative mode, behave very similarly to parameters in position mode:the parameter is interpreted as a position. 
+            //Like position mode, parameters in relative mode can be read from or written to.
+            //The important difference is that relative mode parameters don't count from address 0.
+            //Instead, they count from a value called the relative base. The relative base starts at 0.
+            //The address a relative mode parameter refers to is itself plus the current relative base.
+            //When the relative base is 0, relative mode parameters and position mode parameters with the same value refer to the same address.
+            return ((ParameterMode)mode) switch
+            {
+                ParameterMode.ImmediateMode => inputParameter ? GetMemory(MemoryLocation) : MemoryLocation,
+                ParameterMode.PositionMode => inputParameter ? GetMemory(GetMemory(MemoryLocation)) : GetMemory(MemoryLocation),
+                ParameterMode.RelativeMode => inputParameter ? GetMemory(GetMemory(MemoryLocation) + relativeBase) : GetMemory(MemoryLocation + relativeBase),
+                _ => throw new Exception("Invalid parameter mode"),
+            };
+        }
+
         /// <summary>
         /// Assign a value in the computer's memory a value. Will automatically allocate more memory if needed.
         /// </summary>
         /// <param name="index">address in memory</param>
-        public void SetMemory(int index, int value)
+        /// TODO: could be improved?
+        public void SetMemory(long index, long value)
         {
             if (index < 0)
             {
                 throw new Exception("Invalid memory address" + index);
             }
-            if (index >= Memory.Count)
+            if (index >= Memory.Length)
             {
-                //Allocate (value - total array length) more memory.
-                Memory.AddRange(new int[index - Memory.Count+1]);
+                Memory = Util.ResizeArray(Memory, index);
             }
             Memory[index] = value;
         }
-        
+
+
         /// <summary>
         /// Retrieve a value from the computer's memory a value. Will return 0 if outside of the memory range of addresses.
         /// </summary>
         /// <param name="index">address in memory</param>
-        public int ReadMemory(int index)
+        public long GetMemory(long index)
         {
             if (index < 0)
             {
                 throw new Exception("Invalid memory address" + index);
             }
-            if (index >= Memory.Count)
+            if (index >= Memory.Length)
             {
                 return 0;
             }

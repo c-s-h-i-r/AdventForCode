@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace AdventForCode
@@ -29,5 +30,16 @@ namespace AdventForCode
                 FindPermutations(permutation, permutations, pointer + 1);
             }
         }
+        public static long[] ResizeArray(long[] array, long index)
+        {
+            // Create a new array and copy the values over
+            long[] newArray = (long[])Array.CreateInstance(typeof(long), index + 1);
+            for (var i = 0; i < Math.Min(array.Length, newArray.Length); i++)
+            {
+                newArray[i] = array[i];
+            }
+            return newArray;
+        }
+
     }
 }

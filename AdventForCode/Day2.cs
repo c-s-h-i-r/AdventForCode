@@ -27,7 +27,7 @@
         //What value is left at position 0 after the program halts?
         public Day2(string filePath) : base(filePath) { }
 
-        public int RunChallengePart1()
+        public long RunChallengePart1()
         {
             var input = Util.ReadInput(this.filePath);
             var computer = new Computer(input[0]);

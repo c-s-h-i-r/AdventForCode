@@ -23,12 +23,12 @@ namespace AdventForCode
 
         public Day5(string filePath) : base(filePath) { }
 
-        public List<int> RunChallengePart1()
+        public List<long> RunChallengePart1()
         {
             var computer = new Computer(Util.ReadInput(this.filePath)[0]);
             //The TEST diagnostic program will start by requesting from the user the ID of the system to test by running an input instruction
             //- provide it 1, the ID for the ship's air conditioner unit.
-            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 1 }));
+            computer.RunIntCodeProgram(new Stack<long>(new List<long>() { 1 }));
             //It will then perform a series of diagnostic tests confirming that various parts of the Intcode computer, like parameter modes, function correctly.
             //For each test, it will run an output instruction indicating how far the result of the test was from the expected value, where 0 means the test was successful.
             //Non-zero outputs mean that a function is not working correctly; check the instructions that were run before the output instruction to see which one failed.
@@ -39,13 +39,13 @@ namespace AdventForCode
             return computer.DiagnosticOutput;
         }
 
-        public List<int> RunChallengePart2()
+        public List<long> RunChallengePart2()
         {
             //This time, when the TEST diagnostic program runs its input instruction to get the ID of the system to test,
             var computer = new Computer(Util.ReadInput(this.filePath)[0]);
             //provide it 5, the ID for the ship's thermal radiator controller.
             //This diagnostic test suite only outputs one number, the diagnostic code.
-            computer.RunIntCodeProgram(new Stack<int>(new List<int>() { 5 }));
+            computer.RunIntCodeProgram(new Stack<long>(new List<long>() { 5 }));
             //What is the diagnostic code for system ID 5?
             return computer.DiagnosticOutput;
         }

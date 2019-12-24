@@ -41,7 +41,7 @@ namespace AdventForCode
 
         public Day7(string filePath): base(filePath){}
 
-        public int RunChallengePart1()
+        public long RunChallengePart1()
         {
             var amplifierControllerSoftware = Util.ReadInput(this.filePath)[0];
 
@@ -49,27 +49,27 @@ namespace AdventForCode
             return FindMaxSignal(amplifierControllerSoftware, new int[] { 0, 1, 2, 3, 4 });
         }
 
-        public int FindMaxSignal(string amplifierControllerSoftware, int[] phaseSettingSequence)
+        public long FindMaxSignal(string amplifierControllerSoftware, int[] phaseSettingSequence)
         {
             //Try every combination of phase settings on the amplifiers.
-            var maxSignal = int.MinValue;
+            var maxSignal = long.MinValue;
 
             var permutations = new List<int[]>();
             Util.FindPermutations(phaseSettingSequence, permutations);
             foreach (var permute in permutations)
             {
-                var lastOutputSignal = 0;
+                long lastOutputSignal = 0;
                 maxSignal = RunProgramThroughAmplifiers(permute, maxSignal, ref lastOutputSignal, amplifierControllerSoftware);
             }
             return maxSignal;
         }
 
-        public int RunProgramThroughAmplifiers(int[] amplifierInput, int maxSignal, ref int lastOutputSignal, string amplifierControllerSoftware)
+        public long RunProgramThroughAmplifiers(int[] amplifierInput, long maxSignal, ref long lastOutputSignal, string amplifierControllerSoftware)
         {
             for (var i = 0; i < this.amplifiers.Length; i++)
             {
                 this.amplifiers[i] = new Computer(amplifierControllerSoftware);
-                this.amplifiers[i].RunIntCodeProgram(new Stack<int>(new List<int>() { lastOutputSignal, amplifierInput[i] }));
+                this.amplifiers[i].RunIntCodeProgram(new Stack<long>(new List<long>() { lastOutputSignal, amplifierInput[i] }));
                 lastOutputSignal = this.amplifiers[i].DiagnosticOutput[0];
                 maxSignal = Math.Max(maxSignal, lastOutputSignal);
             }
