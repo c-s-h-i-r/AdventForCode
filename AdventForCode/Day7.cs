@@ -79,11 +79,11 @@ namespace AdventForCode
         //        --- Part Two ---
         //It's no good - in this configuration, the amplifiers can't generate a large enough output signal to produce the thrust you'll need.
         //The Elves quickly talk you through rewiring the amplifiers into a feedback loop:
-        //      O-------O O-------O O-------O O-------O O-------O
-        //0 -+->| Amp A |->| Amp B |->| Amp C |->| Amp D |->| Amp E |-.
-        //   |  O-------O O-------O O-------O O-------O O-------O |
-        //   |                                                        |
-        //   '--------------------------------------------------------+
+        //         O-------O  O-------O  O-------O  O-------O  O-------O
+        //   0 -+->| Amp A |->| Amp B |->| Amp C |->| Amp D |->| Amp E |-.
+        //      |  O-------O  O-------O  O-------O  O-------O  O-------O |
+        //      |                                                        |
+        //      '--------------------------------------------------------+
         //                                                            |
         //                                                            v
         //                                                     (to thrusters)
