@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventForCode
 {
-    public class Day9:BaseChallenge
+    public class Day9 : BaseChallenge
     {
         //        --- Day 9: Sensor Boost ---
         //You've just said goodbye to the rebooted rover and left Mars when you receive a faint distress signal coming from the asteroid belt.
@@ -14,9 +13,8 @@ namespace AdventForCode
         //While BOOST(your puzzle input) is capable of boosting your sensors, for tenuous safety reasons,
         //it refuses to do so until the computer it runs on passes some checks to demonstrate it is a complete Intcode computer.
         //Your existing Intcode computer is missing one key feature: it needs support for parameters in relative mode.
-        
-        
-        public Day9(string filePath):base(filePath){}
+
+        public Day9(string filePath) : base(filePath) { }
 
         public long RunChallengePart1()
         {
@@ -29,14 +27,23 @@ namespace AdventForCode
             computer.RunIntCodeProgram(new Stack<long>(new List<long>() { 1 }));
 
             //What BOOST keycode does it produce?
-            Console.WriteLine(string.Join(",",computer.DiagnosticOutput));
             return computer.DiagnosticOutput.Last();
         }
 
-        //public List<int> RunChallengePart2()
-        //{
-        //    //What BOOST keycode does it produce?
-        //    return 0;
-        //}
+        public long RunChallengePart2()
+        {
+            // ---Part Two-- -
+            //You now have a complete Intcode computer.
+            //Finally, you can lock on to the Ceres distress signal! 
+            //You just need to boost your sensors using the BOOST program.
+            //The program runs in sensor boost mode by providing the input instruction the value 2.
+            var computer = new Computer(Util.ReadInput(this.filePath)[0]);
+            computer.RunIntCodeProgram(new Stack<long>(new List<long>() { 2 }));
+            //Once run, it will boost the sensors automatically, but it might take a few seconds to complete the operation on slower hardware.
+            //In sensor boost mode, the program will output a single value: the coordinates of the distress signal.
+            //Run the BOOST program in sensor boost mode.
+            //What are the coordinates of the distress signal?
+            return computer.DiagnosticOutput.Last();
+        }
     }
 }

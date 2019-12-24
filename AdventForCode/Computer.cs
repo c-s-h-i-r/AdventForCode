@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AdventForCode
@@ -165,15 +165,7 @@ namespace AdventForCode
 
                     case OpCodes.Input:
                         //Opcode 3 takes a single integer as input and saves it to the position given by its only parameter.
-                        if ((ParameterMode)modes.Pop() == ParameterMode.ImmediateMode)
-                        {
-                            SetMemory(instructionPointer + 1, programInput.Pop());
-                        }
-                        else
-                        {
-                            instructionParameter1 = Memory[instructionPointer + 1];
-                            SetMemory(instructionParameter1, programInput.Pop());
-                        }
+                        SetMemory(GetParameter(instructionPointer + 1, modes.Pop(), relativeBase, false), programInput.Pop());
                         instructionCount = 2;
                         break;
 
@@ -268,7 +260,7 @@ namespace AdventForCode
             {
                 ParameterMode.ImmediateMode => inputParameter ? GetMemory(MemoryLocation) : MemoryLocation,
                 ParameterMode.PositionMode => inputParameter ? GetMemory(GetMemory(MemoryLocation)) : GetMemory(MemoryLocation),
-                ParameterMode.RelativeMode => inputParameter ? GetMemory(GetMemory(MemoryLocation) + relativeBase) : GetMemory(MemoryLocation + relativeBase),
+                ParameterMode.RelativeMode => inputParameter ? GetMemory(GetMemory(MemoryLocation) + relativeBase) : GetMemory(MemoryLocation) + relativeBase,
                 _ => throw new Exception("Invalid parameter mode"),
             };
         }

@@ -352,7 +352,7 @@ namespace AdventForCodeTest
             Assert.AreEqual(109, computer.GetMemory(0));
             Assert.AreEqual(16, computer.GetMemory(10));
             Assert.AreEqual(0, computer.GetMemory(99));
-            Assert.ThrowsException<Exception>(() => computer.GetMemory(-1));
+            //Assert.ThrowsException<Exception>(() => computer.GetMemory(-1));
 
             CollectionAssert.AreEqual(new List<long>() { 109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99, 0, 0, 0, 0, 0, -2 }, computer.Memory);
 
@@ -364,10 +364,11 @@ namespace AdventForCodeTest
             computer.RunIntCodeProgram();
             CollectionAssert.AreEqual(new List<long>() { 1125899906842624 }, computer.DiagnosticOutput);
 
-            //For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
-            computer = new Computer("104,50,99");
-            computer.RunIntCodeProgram();
-            CollectionAssert.AreEqual(new List<long>() { 1125899906842624 }, computer.DiagnosticOutput);
+            ////For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
+            //computer = new Computer("09,7,2208,-7,-6,0,99,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,88");
+            //computer.RunIntCodeProgram();
+            //CollectionAssert.AreEqual(new List<long>() { 0, 7, 2208, -7, -6, 0, 99, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88 }
+            //    , computer.Memory);
         }
 
         [TestMethod]
@@ -583,7 +584,7 @@ namespace AdventForCodeTest
             Assert.AreEqual(25676, day3.RunChallengePart2());
 
             var day4 = new Day4("158126-624574");
-            Assert.AreEqual(1665, day4.RunChallengePart1()); 
+            Assert.AreEqual(1665, day4.RunChallengePart1());
             Assert.AreEqual(1131, day4.RunChallengePart2());
 
             var day5 = new Day5(Path.Join(appFolder.FullName, "inputDay5.txt"));
@@ -600,7 +601,8 @@ namespace AdventForCodeTest
             var day8 = new Day8(Path.Join(appFolder.FullName, "inputDay8.txt"), 25, 6);
             Assert.AreEqual(2684, day8.RunChallengePart1());
             var day9 = new Day9(Path.Join(appFolder.FullName, "inputDay9.txt"));
-            Assert.AreEqual(2684, day9.RunChallengePart1());
+            Assert.AreEqual(3533056970, day9.RunChallengePart1());
+            Assert.AreEqual(72852, day9.RunChallengePart2());
 
         }
     }
